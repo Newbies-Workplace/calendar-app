@@ -6,6 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createEvent as createEvent } from "@/app/actions";
 import { useActionState } from "react";
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Newbies Calendar',
+  description: 'Newbies Calendar - is an app that help you to find the best date for your event.',
+}
 
 export default function Home() {
   const [state, formAction, pending] = useActionState(createEvent, { messages: "" });
