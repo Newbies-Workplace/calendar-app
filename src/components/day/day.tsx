@@ -44,7 +44,7 @@ export const Day = ({ eventId, votes, dayNumber, hidden, onClick }: DayProps) =>
       </div>
       {totalVotes > 0 && (
         <div className="absolute bottom-1 flex flex-wrap justify-center gap-0.5 w-full px-1">
-          {votes.slice(0, 24).map((vote, index) => (  // Limit do 24 głosów
+          {votes.slice(0, 24).map((vote, index) => (
             <span
               key={index}
               className={cn(
