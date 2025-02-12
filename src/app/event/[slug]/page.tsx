@@ -1,6 +1,8 @@
+import { getEvent } from '@/app/actions';
 import { UserCard } from '@/components/atoms/userCard';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, HelpCircle, Share2 } from 'lucide-react';
+import { notFound } from 'next/navigation';
 import React from 'react';
 
 export default async function EventPage({
@@ -11,6 +13,11 @@ export default async function EventPage({
     }>
 }) {
     const slug = (await params).slug
+    const event = await getEvent(slug)
+
+    if (!event) {
+        return notFound()
+    }
 
     return (
         <div className="flex flex-row h-screen">
@@ -51,7 +58,8 @@ export default async function EventPage({
             </div>
 
             <div className='flex flex-col h-full w-1/3 bg-gray-300 p-2 gap-2'>
-                {slug}
+                <h1>{event.name}</h1>
+                <p>{event.description}</p>
 
                 <h1>Uczestnicy</h1>
                 <div className='flex flex-row flex-wrap gap-2'>

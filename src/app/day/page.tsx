@@ -1,5 +1,5 @@
 'use client';
-import {Day} from "@/components/day/day";
+import {Day} from "@/components/atoms/day";
 
 export default function Page() {
   return (

@@ -1,8 +1,11 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import { DatePickerWithRange } from "@/components/ui/datePickerWithRange";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { createEvent as createEvent } from "@/app/actions";
+import { useActionState } from "react";
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -11,6 +14,8 @@ export const metadata: Metadata = {
 }
 
 export default function Home() {
+  const [state, formAction, pending] = useActionState(createEvent, { messages: "" });
+
   return (
     <div className="h-screen flex flex-row">
       {/* left section */}
@@ -31,15 +36,15 @@ export default function Home() {
           <h1 className="font-bold text-2xl">Newbies Calendar</h1>
         </div>
         
-        <form action="" className="flex flex-col gap-4">
+        <form action={formAction} className="flex flex-col gap-4">
           
           <h1 className="text-xl lg:text-3xl lg:font-bold text-center font-semibold">Stwórz wydarzenie</h1>
 
           <div>
             <Label htmlFor="eventName">Nazwa wydarzenia</Label>
             <Input
-              id="eventName"
-              type="eventName"
+              name="eventName"
+              type="text"
               placeholder="Urodziny Basi 🎉"
             />
           </div>
@@ -47,7 +52,7 @@ export default function Home() {
           <div>
             <Label htmlFor="eventName">Opis wydarzenia</Label>
             <Textarea
-              id="eventDescription"
+              name="eventDescription"
               className="resize-none h-20"
               placeholder="Przyjdźcie z 🎁 (Opcjonalne)"
             />
@@ -55,19 +60,20 @@ export default function Home() {
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="eventName">Zakres wydarzenia</Label>
-            <DatePickerWithRange />
+            <DatePickerWithRange name="eventTimeFrame"/>
           </div>
 
           <div>
             <Label htmlFor="eventName">Nazwa użytkownika</Label>
             <Input
-              id="userName"
+              name="userName"
               type="userName"
               placeholder="Asia 🌸"
             />
           </div>
 
-          <Button type="submit">Szukaj terminów</Button>
+          <Button type="submit" disabled={pending}>Szukaj terminów</Button>
+          {state?.messages && <p className="text-red-500">{state.messages}</p>}
         </form>
       </main>
     </div>
