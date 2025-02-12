@@ -16,7 +16,8 @@ import {
 
 export function DatePickerWithRange({
   className,
-}: React.HTMLAttributes<HTMLDivElement>) {
+  name,
+}: React.HTMLAttributes<HTMLDivElement> & { name?: string }) {
 const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 7),
@@ -24,6 +25,9 @@ const [date, setDate] = React.useState<DateRange | undefined>({
 
   return (
     <div className={cn("grid gap-2", className)}>
+      <input readOnly type="text" className="hidden" value={date?.from?.toISOString()} name={name+"From"} />
+      <input readOnly type="text" className="hidden" value={date?.to?.toISOString()} name={name+"To"} />
+
       <Popover>
         <PopoverTrigger asChild>
           <Button
