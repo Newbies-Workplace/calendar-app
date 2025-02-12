@@ -3,7 +3,12 @@ import { DatePickerWithRange } from "@/components/ui/datePickerWithRange";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import Image from "next/image";
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Newbies Calendar',
+  description: 'Newbies Calendar - is an app that help you to find the best date for your event.',
+}
 
 export default function Home() {
   return (
@@ -50,7 +55,7 @@ export default function Home() {
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="eventName">Zakres wydarzenia</Label>
-            <DatePickerWithRange/>
+            <DatePickerWithRange />
           </div>
 
           <div>
