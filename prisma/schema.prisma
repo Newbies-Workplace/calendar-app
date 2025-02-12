@@ -1,11 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -14,7 +9,40 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id   String @id @default(uuid())
+  name String
+
+  Events Event[]
+  Votes  Vote[]
+}
+
+model Event {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  startDate DateTime @db.Date
+  endDate   DateTime @db.Date
+
+  Users User[]
+  Votes Vote[]
+}
+
+model Vote {
+  id     String   @id @default(uuid())
+  day    DateTime @db.Date
+  status Status
+
+  eventId String
+  userId  String
+
+  Event Event @relation(fields: [eventId], references: [id])
+  User  User  @relation(fields: [userId], references: [id])
+
+  @@unique([day, eventId, userId])
+}
+
+enum Status {
+  AVAILABLE
+  NOT_AVAILABLE
 }
