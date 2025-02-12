@@ -1,4 +1,4 @@
-import { UserCard } from '@/components/atoms/user-card';
+import { UserCard } from '@/components/atoms/userCard';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, HelpCircle, Share2 } from 'lucide-react';
 import React from 'react';
