@@ -1,5 +1,6 @@
 import {getEvent} from "@/app/actions"
 import {Metadata} from "next";
+import {SidebarProvider} from "@/components/ui/sidebar";
 
 export async function generateMetadata({params}: {
   params: { slug: string }
@@ -27,8 +28,10 @@ export default async function EventLayout({children, params}: {
   const event = await getEvent(slug)
 
   return (
-    <div>
+    <SidebarProvider style={{
+      "--sidebar-width": "30rem"
+    }}>
       {children}
-    </div>
+    </SidebarProvider>
   )
 }
