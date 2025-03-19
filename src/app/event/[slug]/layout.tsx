@@ -1,11 +1,12 @@
 import {getEvent} from "@/app/actions"
 import {Metadata} from "next";
-import {SidebarProvider} from "@/components/ui/sidebar";
+import React from "react";
 
 export async function generateMetadata({params}: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
-  const event = await getEvent(params.slug);
+  const slug = (await params).slug
+  const event = await getEvent(slug);
 
   if (!event) {
     return {
@@ -28,10 +29,8 @@ export default async function EventLayout({children, params}: {
   const event = await getEvent(slug)
 
   return (
-    <SidebarProvider style={{
-      "--sidebar-width": "30rem"
-    }}>
+    <>
       {children}
-    </SidebarProvider>
+    </>
   )
 }
