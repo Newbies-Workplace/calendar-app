@@ -1,6 +1,7 @@
 'use client';
+
 import React from "react";
-import { cn } from "@/lib/utils";
+import {cn} from "@/lib/utils";
 
 interface Vote {
   userId: string;
@@ -8,7 +9,6 @@ interface Vote {
 }
 
 interface DayProps {
-  eventId: string;
   votes: Vote[];
   dayNumber: number;
   hidden: boolean;
@@ -24,7 +24,7 @@ const getColor = (availability: number | null) => {
   return colorScale[Math.min(Math.floor(availability * (colorScale.length - 1)), colorScale.length - 1)];
 };
 
-export const Day = ({ eventId, votes, dayNumber, hidden, onClick }: DayProps) => {
+export const Day = ({ votes, dayNumber, hidden, onClick }: DayProps) => {
   const totalVotes = votes.length;
   const availableVotes = votes.filter(vote => vote.available).length;
   const availability = totalVotes > 0 ? availableVotes / totalVotes : null;
@@ -32,7 +32,7 @@ export const Day = ({ eventId, votes, dayNumber, hidden, onClick }: DayProps) =>
   return (
     <button
       className={cn(
-        "relative min-h-16 min-w-16 sm:min-h-24 sm:min-w-24 flex items-center justify-center font-bold text-sm sm:text-base border-2 rounded-xl transition-all",
+        "relative aspect-square min-h-16 min-w-16 sm:min-h-24 sm:min-w-24 flex items-center justify-center font-bold text-sm sm:text-base border-2 rounded-xl transition-all",
         hidden ? "bg-gray-300 text-gray-500 cursor-not-allowed" : getColor(availability),
         !hidden && "hover:scale-110 hover:border-black"
       )}

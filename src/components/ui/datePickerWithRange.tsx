@@ -1,27 +1,23 @@
 "use client"
 
 import * as React from "react"
-import { addDays, format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
-import { DateRange } from "react-day-picker"
-
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+import {addDays, format} from "date-fns"
+import {CalendarIcon} from "lucide-react"
+import {DateRange} from "react-day-picker"
+import {pl} from "date-fns/locale";
+import {cn} from "@/lib/utils"
+import {Button} from "@/components/ui/button"
+import {Calendar} from "@/components/ui/calendar"
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
 
 export function DatePickerWithRange({
   className,
   name,
 }: React.HTMLAttributes<HTMLDivElement> & { name?: string }) {
-const [date, setDate] = React.useState<DateRange | undefined>({
+  const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 7),
-})
+  })
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -42,14 +38,14 @@ const [date, setDate] = React.useState<DateRange | undefined>({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
+                  {format(date.from, "LLL dd, y", {locale: pl})} -{" "}
+                  {format(date.to, "LLL dd, y", {locale: pl})}
                 </>
               ) : (
-                format(date.from, "LLL dd, y")
+                format(date.from, "LLL dd, y", {locale: pl})
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Wybierz datę</span>
             )}
           </Button>
         </PopoverTrigger>
@@ -57,6 +53,7 @@ const [date, setDate] = React.useState<DateRange | undefined>({
           <Calendar
             initialFocus
             mode="range"
+            locale={pl}
             defaultMonth={date?.from}
             selected={date}
             onSelect={setDate}

@@ -1,10 +1,4 @@
-import type { Metadata } from 'next'
 import {EventCreateForm} from "@/components/forms/eventCreateForm";
-
-export const metadata: Metadata = {
-  title: 'Newbies Calendar',
-  description: 'Newbies Calendar - is an app that help you to find the best date for your event.',
-}
 
 export default function Home() {
   return (
