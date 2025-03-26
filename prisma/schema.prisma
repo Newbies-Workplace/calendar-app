@@ -12,6 +12,8 @@ model User {
   id   String @id @default(uuid())
   name String
 
+  token String @unique @default(uuid())
+
   OwnedEvents Event[] @relation(name: "EventsOwner")
   Events      Event[]
   Votes       Vote[]
