@@ -2,7 +2,7 @@
 
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import React, {useActionState} from "react";
+import React, {startTransition, useActionState} from "react";
 import {Label} from "@/components/ui/label";
 import {createUser} from "@/lib/actions";
 import {
@@ -13,14 +13,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
+import {cn} from "@/lib/utils";
 
 export const UserCreateForm = ({}) => {
-  const [state, formAction, pending] = useActionState(createUser, {messages: ""});
+  const [state, formAction, pending] = useActionState(createUser, {errors: {}});
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // @ts-expect-error target is HTMLFormElement
+    const formData = new FormData(e.target);
+    startTransition(() => formAction(formData));
+  }
 
   return (
     <AlertDialog open>
       <AlertDialogContent>
-        <form action={formAction}>
+        <form onSubmit={handleSubmit}>
           <AlertDialogHeader>
             <AlertDialogTitle>Zanim zaczniemy</AlertDialogTitle>
             <AlertDialogDescription>Powiedz nam kim jesteś</AlertDialogDescription>
@@ -31,15 +39,14 @@ export const UserCreateForm = ({}) => {
 
             <div className={"flex-1"}>
               <Label htmlFor={"name"}>Twoje imię</Label>
-              <Input name={"name"} placeholder={"Mechaniczna owca"}/>
+              <Input name={"name"} placeholder={"Mechaniczna owca"} className={cn(state?.errors?.name && "border-red-500")}/>
+              {state?.errors?.name && <p className="text-sm text-red-500">{state.errors.name}</p>}
             </div>
           </div>
 
           <AlertDialogFooter>
             <div className={"flex-col gap-4"}>
               <Button disabled={pending} type={"submit"}>Gotowe</Button>
-
-              {state?.messages && <p className="text-red-500">{state.messages}</p>}
             </div>
           </AlertDialogFooter>
         </form>

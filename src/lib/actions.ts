@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import {getSession, saveSession} from "@/lib/session";
 
 const UserCreateSchema = z.object({
-  name: z.string().min(1).max(50),
+  name: z.string().min(1, "Uzupełnij imię").max(50, "Imię nie może być dłuższe niż 50 znaków"),
 })
 
 export const createUser = async (prevState: any, form: FormData) => {
@@ -17,7 +17,7 @@ export const createUser = async (prevState: any, form: FormData) => {
 
   if (!validatedForm.success) {
     return {
-      messages: JSON.stringify(validatedForm.error.flatten().fieldErrors),
+      errors: validatedForm.error.flatten().fieldErrors,
     }
   }
 
