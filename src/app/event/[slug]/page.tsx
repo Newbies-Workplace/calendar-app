@@ -1,4 +1,4 @@
-import {getEvent} from '@/app/actions';
+import {getEvent} from '@/lib/actions';
 import {UserCard} from '@/components/atoms/userCard';
 import {Button} from '@/components/ui/button';
 import {HelpCircle, Home} from 'lucide-react';

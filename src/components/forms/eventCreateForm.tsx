@@ -6,7 +6,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {DatePickerWithRange} from "@/components/ui/datePickerWithRange";
 import {Button} from "@/components/ui/button";
 import {useActionState} from "react";
-import {createEvent} from "@/app/actions";
+import {createEvent} from "@/lib/actions";
 
 export const EventCreateForm = () => {
   const [state, formAction, pending] = useActionState(createEvent, {messages: ""});
@@ -36,15 +36,6 @@ export const EventCreateForm = () => {
       <div className="flex flex-col gap-2">
         <Label htmlFor="eventName">Zakres wydarzenia</Label>
         <DatePickerWithRange name="eventTimeFrame"/>
-      </div>
-
-      <div>
-        <Label htmlFor="eventName">Nazwa użytkownika</Label>
-        <Input
-          name="userName"
-          type="userName"
-          placeholder="Asia 🌸"
-        />
       </div>
 
       <Button type="submit" disabled={pending}>Szukaj terminów</Button>

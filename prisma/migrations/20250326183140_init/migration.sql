@@ -1,25 +1,14 @@
-/*
-  Warnings:
-
-  - The primary key for the `User` table will be changed. If it partially fails, the table could be left without primary key constraint.
-  - You are about to drop the column `email` on the `User` table. All the data in the column will be lost.
-  - Made the column `name` on table `User` required. This step will fail if there are existing NULL values in that column.
-
-*/
 -- CreateEnum
 CREATE TYPE "Status" AS ENUM ('AVAILABLE', 'NOT_AVAILABLE');
 
--- DropIndex
-DROP INDEX "User_email_key";
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
 
--- AlterTable
-ALTER TABLE "User" DROP CONSTRAINT "User_pkey",
-DROP COLUMN "email",
-ALTER COLUMN "id" DROP DEFAULT,
-ALTER COLUMN "id" SET DATA TYPE TEXT,
-ALTER COLUMN "name" SET NOT NULL,
-ADD CONSTRAINT "User_pkey" PRIMARY KEY ("id");
-DROP SEQUENCE "User_id_seq";
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Event" (
@@ -28,6 +17,7 @@ CREATE TABLE "Event" (
     "description" TEXT,
     "startDate" DATE NOT NULL,
     "endDate" DATE NOT NULL,
+    "ownerId" TEXT NOT NULL,
 
     CONSTRAINT "Event_pkey" PRIMARY KEY ("id")
 );
@@ -52,10 +42,16 @@ CREATE TABLE "_EventToUser" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_token_key" ON "User"("token");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Vote_day_eventId_userId_key" ON "Vote"("day", "eventId", "userId");
 
 -- CreateIndex
 CREATE INDEX "_EventToUser_B_index" ON "_EventToUser"("B");
+
+-- AddForeignKey
+ALTER TABLE "Event" ADD CONSTRAINT "Event_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Vote" ADD CONSTRAINT "Vote_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -4,6 +4,8 @@ import "./globals.css";
 import {Toaster} from "@/components/ui/sonner";
 import {Providers} from "@/lib/providers";
 import React from "react";
+import {UserCreateForm} from "@/components/forms/userCreateForm";
+import {getSession} from "@/lib/session";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,12 +19,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Newbies Calendar',
-  description: 'Newbies Calendar - is an app that help you to find the best date for your event.',
+  description: 'Newbies Calendar - aplikacja do szukania terminów na spotkania',
 }
 
-export default function RootLayout({children,}: Readonly<{
+export default async function RootLayout({children,}: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getSession();
+
   return (
     <html lang="en">
     <head>
@@ -36,6 +40,9 @@ export default function RootLayout({children,}: Readonly<{
     >
     <Providers>
       {children}
+
+      {!session && <UserCreateForm/>}
+
       <Toaster position={"top-center"} duration={1000}/>
     </Providers>
     </body>

@@ -1,4 +1,4 @@
-import {getEvent} from "@/app/actions"
+import {getEvent} from "@/lib/actions"
 import {Metadata} from "next";
 import React from "react";
 
