@@ -1,6 +1,8 @@
-import {getEvent} from "@/lib/actions"
+import {getEvent, joinEvent} from "@/lib/actions"
 import {Metadata} from "next";
 import React from "react";
+import {getSession} from "@/lib/session";
+import {redirect} from "next/navigation";
 
 export async function generateMetadata({params}: {
   params: Promise<{ slug: string }>
@@ -26,7 +28,18 @@ export default async function EventLayout({children, params}: {
 
 }) {
   const slug = (await params).slug
+  const session = await getSession()
+  if (!session) {
+    redirect('/')
+  }
+
   const event = await getEvent(slug)
+  const users = event?.Users ?? []
+
+  // assert user in event
+  if (users.find(u => u.id === session.userId) === undefined) {
+    await joinEvent(slug)
+  }
 
   return (
     <>

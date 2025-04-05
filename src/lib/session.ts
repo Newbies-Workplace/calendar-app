@@ -1,3 +1,5 @@
+"use server"
+
 import 'server-only'
 
 import {User} from "@prisma/client";
@@ -36,9 +38,11 @@ async function decrypt(session: string | undefined = '') {
 
 export const saveSession = async (user: User) => {
   const cookieStore = await cookies()
-  const session: UserSession = {userId: user.id,
+  const session: UserSession = {
+    userId: user.id,
     name: user.name,
-    token: user.token,}
+    token: user.token,
+  }
 
   const encryptedSession = await encrypt(session)
 

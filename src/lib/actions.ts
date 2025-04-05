@@ -5,6 +5,16 @@ import {redirect} from 'next/navigation'
 import {z} from 'zod'
 import dayjs from 'dayjs'
 import {getSession, saveSession} from "@/lib/session";
+import {Status} from "@prisma/client";
+
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+dayjs.tz.setDefault("UTC")
+
 
 const UserCreateSchema = z.object({
   name: z.string().min(1, "Uzupełnij imię").max(50, "Imię nie może być dłuższe niż 50 znaków"),
@@ -72,7 +82,12 @@ export const createEvent = async (prevState: any, formData: FormData) => {
       description: validatedForm.data.eventDescription,
       startDate: validatedForm.data.eventTimeFrame.start,
       endDate: validatedForm.data.eventTimeFrame.end,
-      ownerId: session.userId
+      ownerId: session.userId,
+      Users: {
+        connect: {
+          id: session.userId,
+        }
+      }
     },
     select: {
       id: true,
@@ -86,6 +101,84 @@ export const getEvent = async (id: string) => {
   return prisma.event.findUnique({
     where: {
       id,
+    },
+    include: {
+      Users: {
+        select: {
+          id: true,
+          name: true,
+        }
+      },
+      Votes: true,
+    }
+  })
+}
+
+export const joinEvent = async (id: string) => {
+  const session = await getSession()
+  if (!session) {
+    throw new Error("Unauthorized")
+  }
+
+  const event = await prisma.event.findUnique({
+    where: {
+      id,
+    },
+  })
+  if (!event) {
+    throw new Error("Event not found")
+  }
+
+  await prisma.event.update({
+    where: {
+      id,
+    },
+    data: {
+      Users: {
+        connect: {
+          id: session.userId,
+        }
+      }
+    }
+  })
+}
+
+export const setVote = async (eventId: string, date: string, status: Status) => {
+  const session = await getSession()
+  if (!session) {
+    throw new Error("Unauthorized")
+  }
+
+  const event = await prisma.event.findUnique({
+    where: {
+      id: eventId,
+      Users: {
+        some: {
+          id: session.userId,
+        }
+      }
+    },
+  })
+  if (!event) {
+    throw new Error("Event not found or user not in event")
+  }
+  
+  await prisma.vote.upsert({
+    where: {
+      day_eventId_userId: {
+        day: dayjs.tz(date).toISOString(),
+        eventId: eventId,
+        userId: session.userId,
+      }
+    },
+    create: {
+      eventId: eventId,
+      userId: session.userId,
+      day: dayjs.tz(date).toISOString(),
+      status: status,
+    },
+    update: {
+      status: status,
     }
   })
 }

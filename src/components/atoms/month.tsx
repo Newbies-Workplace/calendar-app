@@ -3,13 +3,19 @@
 import React from "react";
 import dayjs from "dayjs";
 import {Day} from "@/components/atoms/day";
+import {Vote} from "@prisma/client";
 
 interface MonthProps {
   year: number;
   month: number;
+
+  currentUserId: string;
+
+  votes: Vote[];
+  onDayClick: (date: string, available: boolean) => void;
 }
 
-export const Month: React.FC<MonthProps> = ({year, month}) => {
+export const Month: React.FC<MonthProps> = ({year, month, currentUserId, votes, onDayClick}) => {
   const firstDay = dayjs(`${year}-${month}-01`);
   const daysInMonth = firstDay.daysInMonth();
   const firstDayPosition = firstDay.day();
@@ -26,9 +32,28 @@ export const Month: React.FC<MonthProps> = ({year, month}) => {
           <div key={`empty-${day}-${month}-${year}`}/>
         ))}
 
-        {Array.from({length: daysInMonth}, (_, i) => i + 1).map(day => (
-          <Day key={`${day}-${month}-${year}`} votes={[]} dayNumber={day} hidden={false} onClick={() => {}}/>
-        ))}
+        {Array.from({length: daysInMonth}, (_, i) => i + 1).map(day => {
+          const dayVotes = votes.filter((vote) => {
+            return dayjs(vote.day).isSame(`${year}-${month}-${day}`, 'day')
+          })
+
+          const onClick = () => {
+            const isCurrentUserAvailable = dayVotes.some((vote) => {
+              return vote.userId === currentUserId && vote.status === "AVAILABLE"
+            })
+
+            onDayClick(`${year}-${month}-${day}`, !isCurrentUserAvailable)
+          }
+
+          return (
+            <Day
+              key={`${day}-${month}-${year}`}
+              votes={dayVotes}
+              dayNumber={day}
+              hidden={false}
+              onClick={onClick}/>
+          );
+        })}
       </div>
     </>
   );

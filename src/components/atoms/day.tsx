@@ -2,11 +2,7 @@
 
 import React from "react";
 import {cn} from "@/lib/utils";
-
-interface Vote {
-  userId: string;
-  available: boolean;
-}
+import {Vote} from "@prisma/client";
 
 interface DayProps {
   votes: Vote[];
@@ -26,7 +22,7 @@ const getColor = (availability: number | null) => {
 
 export const Day = ({ votes, dayNumber, hidden, onClick }: DayProps) => {
   const totalVotes = votes.length;
-  const availableVotes = votes.filter(vote => vote.available).length;
+  const availableVotes = votes.filter(vote => vote.status === "AVAILABLE").length;
   const availability = totalVotes > 0 ? availableVotes / totalVotes : null;
 
   return (
@@ -34,7 +30,7 @@ export const Day = ({ votes, dayNumber, hidden, onClick }: DayProps) => {
       className={cn(
         "relative aspect-square min-h-16 min-w-16 sm:min-h-24 sm:min-w-24 flex items-center justify-center font-bold text-sm sm:text-base border-2 rounded-xl transition-all",
         hidden ? "bg-gray-300 text-gray-500 cursor-not-allowed" : getColor(availability),
-        !hidden && "hover:scale-110 hover:border-black"
+        !hidden && "hover:scale-110 hover:border-black border"
       )}
       onClick={!hidden ? onClick : undefined}
       disabled={hidden}
@@ -49,7 +45,7 @@ export const Day = ({ votes, dayNumber, hidden, onClick }: DayProps) => {
               key={index}
               className={cn(
                 "min-h-1.5 min-w-1.5 sm:min-h-3 sm:min-w-3 rounded-full border border-black",
-                vote.available ? "bg-green-500" : "bg-red-500"
+                vote.status === "AVAILABLE" ? "bg-green-500" : "bg-red-500"
               )}
             />
           ))}

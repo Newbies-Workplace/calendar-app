@@ -35,7 +35,6 @@ model Event {
 }
 
 model Vote {
-  id     String   @id @default(uuid())
   day    DateTime @db.Date
   status Status
 
@@ -45,7 +44,7 @@ model Vote {
   Event Event @relation(fields: [eventId], references: [id])
   User  User  @relation(fields: [userId], references: [id])
 
-  @@unique([day, eventId, userId])
+  @@id([day, eventId, userId])
 }
 
 enum Status {

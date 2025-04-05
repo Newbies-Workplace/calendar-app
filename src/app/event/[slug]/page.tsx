@@ -1,8 +1,8 @@
-import {getEvent} from '@/lib/actions';
+import {getEvent, setVote} from '@/lib/actions';
 import {UserCard} from '@/components/atoms/userCard';
 import {Button} from '@/components/ui/button';
 import {HelpCircle, Home} from 'lucide-react';
-import {notFound} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 import React from 'react';
 import {
   Sidebar,
@@ -30,16 +30,29 @@ import {
 } from '@/components/ui/dialog';
 import {Month} from "@/components/atoms/month";
 import {ScrollArea} from "@/components/ui/scroll-area";
+import dayjs from "dayjs";
+import {getSession} from "@/lib/session";
 
 export default async function EventPage({params}: {
   params: Promise<{ slug: string }>
 }) {
   const slug = (await params).slug
   const event = await getEvent(slug)
+  const session = await getSession()
 
+  if (!session) {
+    return redirect('/')
+  }
   if (!event) {
     return notFound()
   }
+
+  const startDate = dayjs(event.startDate);
+  const endDate = dayjs(event.endDate);
+
+  const repeats =
+    (endDate.year() - startDate.year()) * 12 +
+    (endDate.month() - startDate.month()) + 1;
 
   return (
     <SidebarProvider
@@ -86,12 +99,23 @@ export default async function EventPage({params}: {
 
         <ScrollArea type={"always"}>
           <main className={"flex flex-1 justify-center items-center flex-col h-full p-2 space-y-8 overflow-hidden"}>
-            <Month year={2025} month={1}/>
-            <Month year={2025} month={2}/>
-            <Month year={2025} month={3}/>
-            <Month year={2025} month={4}/>
-            <Month year={2025} month={5}/>
-            <Month year={2025} month={6}/>
+            {[...Array(repeats)].map((_, i) => {
+              const month = startDate.add(i + 1, 'month');
+
+              return (
+                <Month
+                  key={i}
+                  year={month.year()}
+                  month={month.month()}
+                  currentUserId={session.userId}
+                  votes={event.Votes}
+                  onDayClick={async (date, available) => {
+                    "use server"
+
+                    await setVote(slug, date, available ? "AVAILABLE" : "NOT_AVAILABLE")
+                  }}/>
+              )
+            })}
           </main>
         </ScrollArea>
       </SidebarInset>
@@ -109,11 +133,9 @@ export default async function EventPage({params}: {
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <div className={"flex flex-col gap-1"}>
-                <UserCard name="John Doe"/>
-                <UserCard name="Ja nie"/>
-                <UserCard name="On tak"/>
-                <UserCard name="On tak tak ta"/>
-                <UserCard name="On tak"/>
+                {event.Users.map((user) => (
+                  <UserCard key={user.id} name={user.name}/>
+                ))}
               </div>
             </SidebarGroupContent>
           </SidebarGroup>
